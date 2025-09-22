@@ -1,0 +1,262 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage[english,russian]{babel} 
+\usepackage[left=25mm, top=20mm, right=25mm, bottom=30mm, nohead, nofoot]{geometry}
+\usepackage{amsmath,amsfonts,amssymb} % математический пакет
+\usepackage{fancybox,fancyhdr} 
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\href{https://vk.com/wildmathing}{Wild Mathing}}
+\fancyfoot[R]{\thepage} 
+\fancyhead[L]{Asymptote}
+\setcounter{page}{2} % счетчик нумерации страниц
+\headsep=10mm 
+\usepackage{xcolor}
+\usepackage{hyperref} 
+\hypersetup{colorlinks=true, allcolors=[RGB]{010 090 200}} % цвет ссылок 
+\usepackage{graphicx} % для картинок
+\usepackage{asymptote} % создание рисунков
+\usepackage{comment} % комментирование
+\setlength{\footskip}{12.0pt}
+\setlength{\headheight}{12.0pt}
+
+\begin{document}
+
+\section*{Примеры иллюстраций и кода Asymptote}
+\subsection*{Полезные ссылки}
+\href{https://vk.com/wall-201568161_2898}{Видеоурок} \\
+\href{https://vk.com/wall-201568161_2821}{Онлайн-редактор} \\ 
+\href{https://vk.com/wall-201568161_2998}{Стереометрия} 
+
+\subsubsection*{Вписанная и описанная окружность}
+\begin{asy}
+size(7cm);
+import geometry;
+triangle t=triangleabc(3, 4, 6);
+draw(t); label(t); draw(incircle(t));
+clipdraw(circumcircle(t));
+\end{asy}
+
+
+\subsubsection*{Вектор на клетчатом поле}
+\begin{asy}
+size(5cm);
+import geometry;
+add(grid(8,5, grey));
+pair A=(1,1), B=(7,4);
+draw(A--B, blue+1bp, EndArrow(HookHead, 2mm));
+label("$A$", A, SW);
+label("$B$", B, NE);
+\end{asy}
+
+
+\subsubsection*{Маршрут с двумя переправами}
+\begin{asy}
+size(6cm,0);
+import geometry;
+defaultpen(fontsize(10pt));
+dotfactor=8;
+pair A, B, K, L, M, P;
+A=(1,1); B=(9,9); K=(2,3); L=K+N; M=(5,5); P=M+N;
+add(grid(10,10, mediumgray));
+path square=shift(3N)*xscale(10)*unitsquare;
+axialshade(square, lightblue, 10E, paleblue, W);
+axialshade(shift(2N)*square, lightblue, 10E, paleblue, W);
+draw(A--K--L--M--P--B, black+1bp);
+distance(scale(0.9)*"$10$", (0,0), 10E, Arrows(HookHead, 1.25mm));
+dot("$A$", A, SW, UnFill); 
+dot("$B$", B, NE, UnFill);
+\end{asy}
+
+\subsubsection*{Самый короткий код}
+\begin{asy}
+size(4cm); draw(polygon(6)^^unitcircle);
+\end{asy}
+
+\subsubsection*{Тригонометрическая спираль}
+\begin{asy}
+import graph;  // для отрисовки осей и графиков 
+size(6cm); // размер рисунка
+texpreamble("\usepackage{amsmath}"); // если захотите использовать \dfrac
+pen frac_pen=fontsize(14pt); // более крупный шрифт для дробей 
+dotfactor=8;
+real rho(real t){return 0.074t+1.2;} // функция для полярной системы координат
+xaxis("$x$", -1.7, 2.1, EndArrow(HookHead, 1.5mm)); // ось абсцисс
+yaxis("$y$", -1.7, 1.7, EndArrow(HookHead, 1.5mm));  // ось ординат
+
+real a, b, x1, x2, buff_left, buff_right;
+a=-pi; // левая граница отрезка
+b=2pi; // правая граница отрезка
+x1=pi/6; // первый корень
+x2=5pi/6; // второй корень
+buff_left=pi/3; // продолжение спирали за точку a;
+buff_right=pi/3; // продолжение спирали за точку b;
+
+ // черная спираль
+guide g=polargraph(rho, a-buff_left, b+buff_right, n=100, join=operator..);
+draw(g, black); 
+ 
+// синяя спираль
+guide g2=polargraph(rho, a, b, n=100, join=operator..); 
+draw(g2, blue+1bp); 
+
+// Переходим от действительного числа к точке на плоскости
+pair A, B, X1, X2;
+A=polar(rho(a), a);
+B=polar(rho(b), b); 
+X1=polar(rho(x1), x1);  
+X2=polar(rho(x2), x2);  
+ 
+// Лейблы
+label("$-\pi$", A, 0.5N, UnFill); 
+label("$2\pi$", B, 0.5N, UnFill);
+label("$\frac{\pi}{6}$", X1, 0.5NE, frac_pen);
+label("$\frac{5\pi}{6}$", X2, 0.5NW, frac_pen);
+labelx(0, 0.5SW);
+dot(X1^^X2); // отметка точек
+\end{asy}
+
+\subsubsection*{Числовая прямая}
+\vspace{1mm}
+\begin{asy}
+import graph;  //для числовой прямой и лейблов
+import patterns;  // для штриховки
+size(8cm);  // размер рисунка
+dotfactor=8; // размер точек
+real a=-4, b=3; // границы числовой прямой
+real x1=-2, x2=1; // нули функции 
+bool inside = false; // выделить промежуток между корнями? true/false
+real buff=0.4; // зазор между стрелкой и окончанием штриховки
+xaxis("$x$", a, b+buff, EndArrow(HookHead, 1.5mm));  // числовая прямая
+labelx(x1); labelx(x2); // лейблы нулей
+add("hatch", hatch (1mm, black)); // настройка штриховки
+real h=0.4;  // высота заштрихованных прямоугольников
+
+// прямоугольники
+path left, center, right; 
+left=(x1,0)--(x1,h)--(a,h)--(a,0)--cycle;
+center=(x1,0)--(x1,h)--(x2,h)--(x2,0)--cycle;
+right=(x2,0)--(x2,h)--(b,h)--(b,0)--cycle;
+
+
+if(inside){
+    filldraw(center, pattern ("hatch")); // отрисовка центральной области
+}
+else{
+fill(left^^right, pattern ("hatch")); // штриховка
+draw(subpath(left, 0, 2)); // контур для левой области
+draw(subpath(right, 0, 2)); // контур для правой области
+}
+
+dot(x1 * E, filltype=UnFill); // выколотоая точка
+dot(x2 * E); // закрашенная точка
+\end{asy}
+
+\subsubsection*{Часы}
+\begin{asy}
+defaultpen(fontsize(10pt));
+size(5cm);
+draw(unitcircle);
+path seg=(0.9,0)--(0.95,0);
+for (int i=0; i<12; ++i){  
+    draw(rotate(30*i)*seg, black+1bp);
+    label(string(i+1), 0.8*dir(60-30*i));
+}
+path arca=arc((0,0), r=1, angle1=60, angle2=150);
+draw(arca, black+1bp);
+\end{asy}
+
+\subsubsection*{Касательная и секущая}
+\begin{asy}
+import geometry;
+size(6cm);
+defaultpen(fontsize(10pt));
+pair P, A, B, C, C1, B1;
+path circ=unitcircle;
+P=(-2,-1); B=(0,-1);
+C=point(circ, 0.7);
+
+A=intersectionpoints(circ, P--C)[1];
+C1=C+0.5unit(C-A);
+B1=B+unit(B-P);
+draw(circ^^B1--P--C1);
+label("$A$", A, W+0.5N);
+label("$B$", B, S);
+label("$C$", C, N);
+label("$P$", P, SW);
+\end{asy}
+
+\subsubsection*{Две окружности} 
+
+\begin{asy}
+import geometry;
+size(7cm);
+dotfactor=8;
+pair A, B, C, D;
+A=(0,0); B=(1,1); C=(-1,0); D=(1,-1);
+draw(B--C--D--cycle^^A--C^^A--D^^A--B);
+path circ=circle(A,sqrt(2));
+path circ_=circle(C,sqrt(5));
+draw(circ^^circ_); 
+dot(A^^C, filltype=UnFill);
+markangle(D, C, B, radius=0.5cm);
+markrightangle(D, A, B, size=0.3cm);
+label("$A$", A, NW);
+label("$B$", B, NE);
+label("$C$", C, NW);
+label("$D$", D, SE);
+\end{asy}
+
+
+\subsubsection*{Четыре попарно касающихся шара, вписанных в цилиндр}
+
+Чтобы отрендерить картинку, вставьте код, размещенный между командами begin и end ниже, в~\href{http://asymptote.ualberta.ca}{онлайн-версию Asymptote}. \\[3mm]
+
+\includegraphics[width=5cm]{img/touching_spheres.pdf}
+
+\begin{comment}
+import solids;
+size(5cm, 7cm);
+settings.render=10;
+currentprojection=orthographic(4,2,1);
+triple A, B, C, D;
+real h=sqrt(3), R=2h+3;
+A=(-3,-h,0);
+B=(3,-h,0);
+C=(0,2h,0);
+D=(0, 0, sqrt(36+24*h));
+
+real op=0.7;
+triple Q[]={A, B, C};
+for (triple p : Q){
+  draw(shift(p)*scale3(3)*unitsphere, blue+opacity(op));  
+}
+draw(shift(D)*scale3(R)*unitsphere, magenta+opacity(op));
+revolution c=cylinder(-3Z,R,D.z+3+R);
+draw(surface(c), magenta+opacity(0.1));
+
+triple V[]={O, D, D+R*Z, -3Z};
+path3 arca=arc(O,R*X,R*X,Z);
+for (triple vec : V){
+  draw(shift(vec)*arca, grey+0.3bp+opacity(1));
+}
+\end{comment}
+
+\subsubsection*{Конус}
+\begin{asy}
+size(5cm);
+import solids;
+settings.render=0;
+currentprojection=orthographic(0,6,2);
+real h=2, r=1;
+draw(cone(O, r, h, n=1));
+
+path3 arca=shift(h*Z/2)*arc(O, 0.5X, -0.5X, Z);
+path3 arca2=shift(h*Z/2)*arc(O, -0.5X, 0.5X, Z);
+draw(arca); 
+draw(arca2, dashed);
+\end{asy}
+
+
+\end{document}
