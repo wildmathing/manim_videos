@@ -209,40 +209,6 @@ label("$D$", D, SE);
 \end{asy}
 
 
-\subsubsection*{Четыре попарно касающихся шара, вписанных в цилиндр}
-
-Чтобы отрендерить картинку, вставьте код, размещенный между командами begin и end ниже, в~\href{http://asymptote.ualberta.ca}{онлайн-версию Asymptote}. \\[3mm]
-
-\includegraphics[width=5cm]{img/touching_spheres.pdf}
-
-\begin{comment}
-import solids;
-size(5cm, 7cm);
-settings.render=10;
-currentprojection=orthographic(4,2,1);
-triple A, B, C, D;
-real h=sqrt(3), R=2h+3;
-A=(-3,-h,0);
-B=(3,-h,0);
-C=(0,2h,0);
-D=(0, 0, sqrt(36+24*h));
-
-real op=0.7;
-triple Q[]={A, B, C};
-for (triple p : Q){
-  draw(shift(p)*scale3(3)*unitsphere, blue+opacity(op));  
-}
-draw(shift(D)*scale3(R)*unitsphere, magenta+opacity(op));
-revolution c=cylinder(-3Z,R,D.z+3+R);
-draw(surface(c), magenta+opacity(0.1));
-
-triple V[]={O, D, D+R*Z, -3Z};
-path3 arca=arc(O,R*X,R*X,Z);
-for (triple vec : V){
-  draw(shift(vec)*arca, grey+0.3bp+opacity(1));
-}
-\end{comment}
-
 \subsubsection*{Конус}
 \begin{asy}
 size(5cm);
@@ -257,6 +223,7 @@ path3 arca2=shift(h*Z/2)*arc(O, -0.5X, 0.5X, Z);
 draw(arca); 
 draw(arca2, dashed);
 \end{asy}
+
 
 
 \end{document}
